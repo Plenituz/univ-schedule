@@ -17,7 +17,7 @@ export class UserService {
     /** the url to get the schedule but without the value of jsessionid at the end */
     private static incompleteUrlSchedule = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml;jsessionid=";
     private static urlCalendar = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/calendar.xhtml";
-    
+    private static urlScheduleNoJsessionid = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml"
     constructor() {}
 
     getDaySchedule(): Promise<any>{
@@ -44,7 +44,7 @@ export class UserService {
         return this.getLoginPage()
         .then(response => {
             // console.log(response.content);
-            let jsessionid =Config.jsessionid; //= this.extractCookieValue([response.headers["Set-Cookie"]], "JSESSIONID");
+            let jsessionid = Config.jsessionid; //= this.extractCookieValue([response.headers["Set-Cookie"]], "JSESSIONID");
             let loginInfo = new LoginInfo(Config.user, response.content);
             //  console.log("got cookie", jsessionid, " and built info from page:");
             //  console.dir(loginInfo);
@@ -69,32 +69,78 @@ export class UserService {
         return http.request(options);
     }
 
-    goToDay(day: number, month: number, year: number){
-        let dayStr = day.toString().length == 1 ? "0" + day : day.toString();
-        let monthStr = month.toString().length == 1 ? "0" + month : month.toString();
-        let yearStr = year.toString();
+    prepareGoToDay(){
+        return this.getScheduleHTML()
+        .then(response => {
+            let cookie = "JSESSIONID=" + Config.jsessionid;
+            let viewState = LoginInfo.extractInputValue("javax.faces.ViewState", response.content);
+            viewState = viewState.substring(0, 2);
+    
+            let data = {
+                'org.apache.myfaces.trinidad.faces.FORM': 'redirectForm',
+                '_noJavaScript': false,
+                'javax.faces.ViewState': viewState,
+                'source': 'redirectForm:goCal'
+            }
+            data = querystring.stringify(data);
+            let options = {
+                url: UserService.urlScheduleNoJsessionid,
+                method: "POST",
+                dontFollowRedirects: true,
+                headers: {
+                    'Cookie': cookie,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                content: data
+            }
+            return http.request(options);
+        });
+    }
 
-        let data = {
-            'formCal:date': dayStr + "/" + monthStr + "/" + yearStr,
-            'org.apache.myfaces.trinidad.faces.FORM': 'formCal',
-            '_noJavaScript': false,
-            'javax.faces.ViewState': '!1',
-            'source': 'formCal:hiddenLink'
-        }
-        data = querystring.stringify(data);
+    getCalendar(): Promise<any>{
         let cookie = "JSESSIONID=" + Config.jsessionid;
-        
         let options = {
             url: UserService.urlCalendar,
-            method: "POST",
-            dontFollowRedirects: true,
-            headers: {
-                'Cookie': cookie,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            content: data
-        }
+            method: "GET",
+            headers:{
+                'Cookie': cookie              
+            }
+        };
         return http.request(options);
+    }
+
+    goToDay(day: number, month: number, year: number): Promise<any>{
+        //you need the get the calendar so you can get the viewState from it
+        return this.getCalendar()
+        .then(response => {
+            let dayStr = day.toString().length == 1 ? "0" + day : day.toString();
+            let monthStr = month.toString().length == 1 ? "0" + month : month.toString();
+            let yearStr = year.toString();
+            let viewState = LoginInfo.extractInputValue("javax.faces.ViewState", response.content);
+            viewState = viewState.substring(0, 2);
+    
+            let data = {
+                'formCal:date': dayStr + "/" + monthStr + "/" + yearStr,
+                'org.apache.myfaces.trinidad.faces.FORM': 'formCal',
+                '_noJavaScript': false,
+                'javax.faces.ViewState': viewState,
+                'source': 'formCal:hiddenLink'
+            }
+            data = querystring.stringify(data);
+            let cookie = "JSESSIONID=" + Config.jsessionid;
+            
+            let options = {
+                url: UserService.urlCalendar,
+                method: "POST",
+                dontFollowRedirects: true,
+                headers: {
+                    'Cookie': cookie,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                content: data
+            }
+            return http.request(options);
+        });
     }
 
     goToNextDay(){
@@ -107,7 +153,7 @@ export class UserService {
         data = querystring.stringify(data);
         let cookie = "JSESSIONID=" + Config.jsessionid;
         let options = {
-            url: "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml",
+            url: UserService.urlScheduleNoJsessionid,
             method: "POST",
             dontFollowRedirects: true,
             headers: {
@@ -129,7 +175,7 @@ export class UserService {
         data = querystring.stringify(data);
         let cookie = "JSESSIONID=" + Config.jsessionid;
         let options = { 
-            url: "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml",
+            url: UserService.urlScheduleNoJsessionid,
             method: "POST",
             dontFollowRedirects: true,
             headers: {
@@ -211,10 +257,10 @@ export class UserService {
     }
 
     private cleanHTML(html){
-        return html.replace(new RegExp(this.escapeRegExp("&#9;"), 'g'), "");
+        return html.replace(new RegExp(UserService.escapeRegExp("&#9;"), 'g'), "");
     }
 
-    private escapeRegExp(str) {
+    static escapeRegExp(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
     }
 }

@@ -13,7 +13,7 @@ import { routes, navigatableComponents } from "./app.routing";
     NativeScriptHttpModule,
     NativeScriptFormsModule,
     NativeScriptRouterModule,
-    NativeScriptRouterModule.forRoot(routes)
+    NativeScriptRouterModule.forRoot(routes),
   ],
   declarations: [
     AppComponent,

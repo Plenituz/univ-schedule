@@ -18,16 +18,6 @@ export class LoginComponent{
     }
 
     submit(){
-        // Config.jsessionid = "CE1630432AAED6CEF9E02C6C4BC4E90C";
-        // this.userService.goToDay(15, 11, 2017)
-        // .then(response => {
-
-        // })
-        // this.userService.isConnected()
-        // .then((c) => {
-        //     console.log("connected:", c);
-        // });
-        // this.userService.getSchedule();
         Config.user = this.user;
         this.userService.connect()
         .then(() => {

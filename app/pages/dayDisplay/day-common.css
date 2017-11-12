@@ -47,3 +47,8 @@
 .bold{
     font-weight: bold;
 }
+
+.arrow{
+    margin-left: 20;
+    margin-right: 20;
+}

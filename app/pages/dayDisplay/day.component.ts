@@ -1,8 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, NgZone } from "@angular/core";
 import { Config } from "../../shared/config";
 import { UserService } from "../../shared/user/user.service";
 import { Page } from "ui/page";
 import { ScheduleDay } from "../../shared/schedule/scheduleDay";
+import { ScheduleCache } from "../../shared/scheduleCache";
 import { Router } from "@angular/router";
 
 @Component({
@@ -14,35 +15,22 @@ import { Router } from "@angular/router";
 export class DayComponent implements OnInit{
     day: ScheduleDay = new ScheduleDay();
 
-    constructor(private userService: UserService, private page: Page, private router: Router){
-        Config.jsessionid = "8503FE6939B86668E801EC21B94D1334";
-        this.userService.isConnected()
-        .then(connected => {
-            if(connected){ 
-                this.updateSchedule();
-            }else{
-                if(Config.loginIsValid)
-                    return userService.connect()
-                    .then(() => userService.isConnected())
-                    .then(connected => { 
-                        if(!connected)
-                            alert("impossible de se connecter");
-                        else
-                            this.updateSchedule();
-                    })
-                else
-                    this.router.navigate(["/login"]);
-            }
-        })
-        .catch(err => {
-            alert("erreur" + err);
-        });
+    constructor(private userService: UserService, private page: Page, 
+        private router: Router, private ngZone: NgZone){
+        
+        this.updateDay();  
     }
 
-    private updateSchedule(){
+    private updateSchedule(){ 
+        
         this.userService.getDaySchedule()
         .then(d => {
-            this.day = d;
+            //force the ui to refresh
+            this.ngZone.run(() => {
+                this.day = d;
+                ScheduleCache.store(this.day);
+        
+            })
         })
     }
 
@@ -57,7 +45,7 @@ export class DayComponent implements OnInit{
     }
 
     clickCalendar(){
-        console.log("click calendar"); 
+        this.router.navigate(["/datePicker"]);
     }
 
     clickItem(index){
@@ -67,17 +55,39 @@ export class DayComponent implements OnInit{
             message: clicked.toString(),
             okButtonText: "OK"
         });
-        
+    }
+
+    updateDay(){
+        this.userService.isConnected()
+        .then(connected => {
+            if(connected){ 
+                this.updateSchedule();
+            }else{
+                if(Config.loginIsValid)
+                    return this.userService.connect()
+                    .then(() => this.userService.isConnected())
+                    .then(connected => {
+                        if(!connected)
+                            alert("impossible de se connecter");
+                        else
+                            this.updateSchedule();
+                    })
+                else
+                    this.router.navigate(["/login"]);
+            }
+        })
+        .catch(err => {
+            alert("erreur" + err);
+        });
+    }
+
+    onNavigatedTo(event){
+        if(event.isBackNavigation)
+            this.updateDay();
     }
 
     ngOnInit() {
         this.page.actionBarHidden = true;
-        // this.userService.goToDay(14, 11, 2017)
-        // .then(response => {
-        //     console.log(response.content);
-        // })
-        // .catch(err => {
-        //     console.log(err);
-        // }) 
+        this.page.on("navigatedTo", ev => this.onNavigatedTo(ev));
     }
 }

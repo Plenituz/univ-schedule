@@ -9,3 +9,9 @@ TextField {
     padding: 10;
     font-size: 13;
 }
+
+.submit-button {
+    background-color: #CB1D00;
+    color: white;
+    margin-top: 20;
+  }

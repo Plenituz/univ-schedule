@@ -1,4 +1,5 @@
 import { User } from "./user";
+import { UserService } from "./user.service";
 
 export class LoginInfo{
     username: string;
@@ -14,14 +15,15 @@ export class LoginInfo{
     constructor (user: User, html: string){
         this.username = user.login;
         this.password = user.password;
-        this.lt = this.extractInputValue("lt", html);
-        this.execution = this.extractInputValue("execution", html);
-        this.ipAddress = this.extractInputValue("ipAddress", html);
+        this.lt = LoginInfo.extractInputValue("lt", html);
+        this.execution = LoginInfo.extractInputValue("execution", html);
+        this.ipAddress = LoginInfo.extractInputValue("ipAddress", html);
     }
 
-    private extractInputValue(name, html){
+    static extractInputValue(name, html){
+        name = UserService.escapeRegExp(name);
         let regex = new RegExp("name=\"" + name + "\" value=\"(.*)\"");
         let result = regex.exec(html);
         return result[1];
     }
-}
+} 

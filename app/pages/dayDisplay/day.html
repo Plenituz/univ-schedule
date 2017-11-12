@@ -1,4 +1,3 @@
-<!-- https://github.com/peoplewareDo/nativescript-svg -->
 <GridLayout rows="auto, *, auto"> 
     <Label></Label>
     <Label row="0" [text]="day.date ? day.date : 'Loading...'" class="header bold"></Label>
@@ -24,9 +23,8 @@
     </ScrollView>   
     
     <GridLayout row="2" columns="auto, *, auto" class="footer">
-        <Label text="prev" col="0" (tap)="clickPrev()"></Label>
-        <Label text="pick date" col="1" (tap)="clickCalendar()"></Label>
-        <Label text="right" col="2" (tap)="clickNext()"></Label>
- 
+        <Image src="~/images/arrow.png" style="transform: rotate(180deg)" (tap)="clickPrev()" class="arrow"></Image>
+        <Image src="~/images/calendar.png" col="1" (tap)="clickCalendar()"></Image>
+        <Image src="~/images/arrow.png" col="2" (tap)="clickNext()" class="arrow"></Image>
     </GridLayout>
 </GridLayout>
