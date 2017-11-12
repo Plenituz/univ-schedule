@@ -1,0 +1,8 @@
+<ActionBar title="Login" class="action-bar"></ActionBar>
+<StackLayout>
+    <TextField hint="Identifiant" autocorrect="false" autocapitalizationType="none"
+        [(ngModel)]="user.login"></TextField>
+    <TextField hint="Mot de passe" secure="true" [(ngModel)]="user.password"></TextField>
+
+    <Button text="Connexion" (tap)="submit()" class="submit-button"></Button>
+</StackLayout>

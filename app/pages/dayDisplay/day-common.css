@@ -1,0 +1,49 @@
+
+.header{
+    height: 60;
+    font-size: 20;
+    background-color: #1CBCFF;
+    text-align: center;
+    padding: 18 0;
+}
+
+.footer{
+    height: 50;
+    font-size: 20;
+    background-color: rgb(96, 208, 252);
+    text-align: center;
+    padding: 11 0;
+}
+
+.tiny-header{
+    font-size: 17;
+    background-color: #c2d076;
+    height: 30;
+    padding-top: 3;
+    padding-left: 10
+}
+
+.name{
+    color: rgb(68, 68, 68);
+}
+
+.room{
+    margin: 5;
+    margin-left: 12;
+    margin-right: 12;
+    font-size: 18;
+}
+
+.speaker{
+    margin-top: 0;
+    /* margin-left: 5; */
+    margin-bottom: 3;
+}
+
+.semi-bold{
+    font-weight:500;
+}
+
+.bold{
+    font-weight: bold;
+}

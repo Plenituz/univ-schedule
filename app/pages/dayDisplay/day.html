@@ -1,0 +1,32 @@
+<!-- https://github.com/peoplewareDo/nativescript-svg -->
+<GridLayout rows="auto, *, auto"> 
+    <Label></Label>
+    <Label row="0" [text]="day.date ? day.date : 'Loading...'" class="header bold"></Label>
+
+    <ScrollView row="1" orientation="vertical" >
+        <ListView [items]="day.classes">
+            <ng-template let-class="item" let-i="index"> 
+                <StackLayout (tap)="clickItem(i)"> 
+                    <DockLayout class="tiny-header">
+                        <Label [text]="class.type" style="min-width: 30" dock="left" class="bold"></Label>
+                        <Label text=" " dock="left"></Label>
+                        <Label [text]="class.name" dock="left" class="bold name"></Label>
+                    </DockLayout> 
+                    <DockLayout stretchLastChild="true">
+                        <Label [text]="class.timeStart + '-' + class.timeEnd" dock="right" style="min-width: 100" class="semi-bold room"></Label>
+                        <Label [text]="class.room" dock="left" class="semi-bold room" [visibility]="class.room ? 'visible' : 'collapsed'"></Label>
+                    </DockLayout>
+                    <Label [text]="class.speaker" class="semi-bold room speaker" [visibility]="class.speaker ? 'visible' : 'collapsed'"></Label>
+                    <Label [text]="class.extraInfo" class="room speaker name" [visibility]="class.extraInfo ? 'visible' : 'collapsed'"></Label>
+                </StackLayout>
+            </ng-template>
+        </ListView>
+    </ScrollView>   
+    
+    <GridLayout row="2" columns="auto, *, auto" class="footer">
+        <Label text="prev" col="0" (tap)="clickPrev()"></Label>
+        <Label text="pick date" col="1" (tap)="clickCalendar()"></Label>
+        <Label text="right" col="2" (tap)="clickNext()"></Label>
+ 
+    </GridLayout>
+</GridLayout>
