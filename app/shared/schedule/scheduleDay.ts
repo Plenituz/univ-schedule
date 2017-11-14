@@ -64,12 +64,16 @@ export class ScheduleDay{
         this.cacheDate = moment().format();
     }
 
-    id(){
-        return ScheduleDay.dateToMoment(this.date);
+    id(): string{
+        return ScheduleDay.formatDate(this.date);
     }
 
-    static dateToMoment(date: string): string{
+    static formatDate(date: string): string{
         let mom = moment(date, "DD MMM", 'fr');
+        return ScheduleDay.formatMoment(mom);
+    }
+
+    static formatMoment(mom: moment.Moment): string{
         return mom.format("DD/MM");
     }
 }

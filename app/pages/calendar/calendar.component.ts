@@ -23,10 +23,7 @@ export class CalendarComponent implements OnInit{
     submit(){
         let picker = <DatePicker>this.picker.nativeElement
 
-        this.userService.prepareGoToDay()
-        .then(response => {
-            return this.userService.goToDay(picker.day, picker.month, picker.year);
-        })
+        this.userService.goToDayNum(picker.day, picker.month, picker.year)
         .then(response => {
             this.routerExtensions.backToPreviousPage();
         })

@@ -5,6 +5,8 @@ const querystring = require('querystring');
 import { Observable } from "rxjs/Rx";
 import "rxjs/add/operator/do";
 import "rxjs/add/operator/map";
+import * as connectivity from "tns-core-modules/connectivity";
+import * as moment from 'moment';
 
 import { User } from "./user";
 import { Config } from "../config";
@@ -69,7 +71,7 @@ export class UserService {
         return http.request(options);
     }
 
-    prepareGoToDay(){
+    private prepareGoToDay(){
         return this.getScheduleHTML()
         .then(response => {
             let cookie = "JSESSIONID=" + Config.jsessionid;
@@ -109,18 +111,30 @@ export class UserService {
         return http.request(options);
     }
 
-    goToDay(day: number, month: number, year: number): Promise<any>{
+    goToDayMom(mom: moment.Moment): Promise<any>{
+        let str = mom.format("DD/MM/YYYY");
+        return this.goToDay(str);
+    }
+
+    goToDayNum(day: number, month: number, year: number): Promise<any>{
+        let dayStr = day.toString().length == 1 ? "0" + day : day.toString();
+        let monthStr = month.toString().length == 1 ? "0" + month : month.toString();
+        let yearStr = year.toString();
+        return this.goToDay(dayStr + "/" + monthStr + "/" + yearStr);
+    }
+
+    goToDay(str: String): Promise<any>{
         //you need the get the calendar so you can get the viewState from it
-        return this.getCalendar()
+        return this.prepareGoToDay()
+        .then(() => {
+            return this.getCalendar();
+        })
         .then(response => {
-            let dayStr = day.toString().length == 1 ? "0" + day : day.toString();
-            let monthStr = month.toString().length == 1 ? "0" + month : month.toString();
-            let yearStr = year.toString();
             let viewState = LoginInfo.extractInputValue("javax.faces.ViewState", response.content);
             viewState = viewState.substring(0, 2);
     
             let data = {
-                'formCal:date': dayStr + "/" + monthStr + "/" + yearStr,
+                'formCal:date': str,
                 'org.apache.myfaces.trinidad.faces.FORM': 'formCal',
                 '_noJavaScript': false,
                 'javax.faces.ViewState': viewState,
@@ -185,6 +199,11 @@ export class UserService {
             content: data
         }
         return http.request(options);
+    }
+
+    hasConnectivity(): boolean{
+        let connectionType = connectivity.getConnectionType();
+        return connectionType != connectivity.connectionType.none;
     }
 
     /**

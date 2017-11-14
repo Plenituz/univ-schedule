@@ -1,5 +1,5 @@
 <GridLayout rows="auto, *, auto"> 
-    <Label></Label>
+    <Label [text]="status"></Label>
     <Label row="0" [text]="day.date ? day.date : 'Loading...'" class="header bold"></Label>
 
     <ScrollView row="1" orientation="vertical" >
