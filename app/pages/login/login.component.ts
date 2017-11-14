@@ -12,6 +12,7 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent{
     user: User;
+    loading: boolean = false;
 
     constructor(private userService: UserService, private router: Router){
         this.user = Config.user;
@@ -19,12 +20,15 @@ export class LoginComponent{
 
     submit(){
         Config.user = this.user;
+        this.loading = true;
         this.userService.connect()
         .then(() => {
+            this.loading = false;
             Config.loginIsValid = true;
             this.router.navigate(["/day"]);
         })
         .catch(err => {
+            this.loading = false; 
             alert("Erreur lors de la connexion");
         });
     }

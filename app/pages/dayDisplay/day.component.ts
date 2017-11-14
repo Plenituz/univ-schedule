@@ -97,7 +97,8 @@ export class DayComponent implements OnInit{
         this.updateCacheForDay(day)
         .then(scheduleDay => {
             this.status = "";
-            this.display(scheduleDay);
+            if((cached && this.day.date == scheduleDay.date) || !cached)
+                this.display(scheduleDay);
             this.setLoading(false);
         }) 
         .catch(err => { 
