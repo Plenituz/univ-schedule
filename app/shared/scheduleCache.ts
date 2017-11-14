@@ -1,14 +1,30 @@
-const couchbaseModule = require("nativescript-couchbase");
+import { Couchbase } from "nativescript-couchbase";
 import * as moment from 'moment';
 import { ScheduleDay } from "./schedule/scheduleDay";
 
 export class ScheduleCache{
-    //static database = new couchbaseModule.Couchbase("test-database");
+    private static database: Couchbase;
+
+    static init(){
+        // ScheduleCache.database = new Couchbase("schedule.db");
+        // this.database.createView("all", "1", function(document, emitter) {
+        //     emitter.emit(document._id, document);
+        // });
+    }
 
     static store(day: ScheduleDay){
-        //Cache.database.createDocument(day);
+        // day.updateCacheDate();        
+        // let id = day.id();
+        // let rows = ScheduleCache.database.executeQuery("all");
+
+        // rows = rows.filter(doc => doc._id == id);
         
-        let date = moment(day.date, "DD MMM", 'fr');
-        let key = date.format("DD/MM");
+        // if(rows.length == 0){
+        //     ScheduleCache.database.createDocument(day, id);
+        // }else{
+        //     ScheduleCache.database.updateDocument(id, day);
+        // }        
     }
-} 
+
+
+}   

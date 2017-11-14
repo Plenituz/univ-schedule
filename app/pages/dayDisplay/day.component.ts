@@ -17,7 +17,7 @@ export class DayComponent implements OnInit{
 
     constructor(private userService: UserService, private page: Page, 
         private router: Router, private ngZone: NgZone){
-        
+        ScheduleCache.init();
         this.updateDay();  
     }
 

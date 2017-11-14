@@ -3,6 +3,8 @@ import * as moment from 'moment';
 const parseHTML = require('nativescript-xml2js').parseString;
 const extractScheduleRegex = new RegExp('<ul data-role="listview" data-theme="d" data-divider-theme="b">[^]*</ul>');
 const extractDateRegex = new RegExp('<h1>([^]* \\d{1,2} [^]*)</h1>');
+const Entities = require('html-entities').AllHtmlEntities;
+const entities = new Entities();
 
 export class ScheduleDay{
     date: string;
@@ -19,7 +21,7 @@ export class ScheduleDay{
                     return reject(err);
                 try{
                     let day = extractDateRegex.exec(html);
-                    this.date = day[1].toString();
+                    this.date = entities.decode(day[1].toString());
 
                     this.populateClassesWithParsedHTML(result);
                     this.updateCacheDate();
@@ -34,7 +36,7 @@ export class ScheduleDay{
     private populateClassesWithParsedHTML(parsedHTML){
         this.classes = [];
         //if the day is empty 
-        if(!parsedHTML.ul.li)
+        if(!parsedHTML.ul.li) 
             return;
 
         let list = parsedHTML.ul.li;
@@ -60,5 +62,14 @@ export class ScheduleDay{
 
     updateCacheDate(){
         this.cacheDate = moment().format();
+    }
+
+    id(){
+        return ScheduleDay.dateToMoment(this.date);
+    }
+
+    static dateToMoment(date: string): string{
+        let mom = moment(date, "DD MMM", 'fr');
+        return mom.format("DD/MM");
     }
 }
