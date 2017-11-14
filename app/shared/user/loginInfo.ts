@@ -24,6 +24,8 @@ export class LoginInfo{
         name = UserService.escapeRegExp(name);
         let regex = new RegExp("name=\"" + name + "\" value=\"(.*)\"");
         let result = regex.exec(html);
-        return result[1];
+        if(result)
+            return result[1];
+        return "";
     }
-} 
+}  

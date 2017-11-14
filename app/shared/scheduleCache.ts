@@ -12,6 +12,14 @@ export class ScheduleCache{
         });
     }
 
+    static clear(){
+        let rows = ScheduleCache.database.executeQuery("all");
+        for(let i = 0; i < rows.length; i++){
+            ScheduleCache.database.deleteDocument(rows[i]._id);
+        }
+        console.dir(ScheduleCache.database.executeQuery("all"));
+    }
+
     static getForDay(date: moment.Moment): ScheduleDay{
         let id = ScheduleDay.formatMoment(date);
         let rows = ScheduleCache.database.executeQuery("all")

@@ -5,8 +5,10 @@ import { Page } from "ui/page";
 import { RouterExtensions } from "nativescript-angular/router";
 import { ScheduleDay } from "../../shared/schedule/scheduleDay";
 import { ScheduleCache } from "../../shared/scheduleCache";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
 import * as moment from 'moment';
+import { looseIdentical } from "@angular/core/src/util";
+import { DataPasser } from "../../shared/dataPasser"; 
 
 @Component({
     selector: "day",
@@ -16,17 +18,19 @@ import * as moment from 'moment';
 })
 export class DayComponent implements OnInit{
     day: ScheduleDay = new ScheduleDay();
-    status: string = "";
+    loading: boolean = false;
+    status: string = ""; 
 
     constructor(private userService: UserService, private page: Page, 
         private router: Router, private ngZone: NgZone, 
-        private routerExtensions: RouterExtensions, private activatedRoute: ActivatedRoute)
+        private routerExtensions: RouterExtensions,
+        private dataPasser: DataPasser)
     {
         ScheduleCache.init();
         this.displayCurrentDay();
     }
 
-    private updateSchedule(){ 
+    private updateSchedule(){  
         
         this.userService.getDaySchedule()
         .then(d => {
@@ -34,20 +38,26 @@ export class DayComponent implements OnInit{
             this.ngZone.run(() => {
                 this.day = d;
                 ScheduleCache.store(this.day);
-        
             })
         })
     }
 
+    clickOptions(){
+        this.router.navigate(["/settings"]);
+    }
+
     clickNext(){
-        
-        //this.userService.goToNextDay()
-        //.then(() => this.updateSchedule());
+        if(!this.day.date)
+            return;
+        let nextDay = moment(this.day.date, "DD MMM", 'fr').add(1, 'days');        
+        this.displayDay(nextDay); 
     }
 
     clickPrev(){
-        this.userService.goToPrevDay()
-        .then(() => this.updateSchedule());
+        if(!this.day.date)
+            return;
+        let prevDay = moment(this.day.date, "DD MMM", 'fr').subtract(1, 'days');
+        this.displayDay(prevDay); 
     }
 
     clickCalendar(){
@@ -69,37 +79,45 @@ export class DayComponent implements OnInit{
         })
     }
 
+    setLoading(val: boolean){
+        this.ngZone.run(() => {
+            this.loading = val;
+        })
+    }
+
     displayDay(day: moment.Moment){
         //check if the wanted day is the next/previous day for shortcuts
         let cached = ScheduleCache.getForDay(day);
         if(cached != null){
             this.display(cached);
-            this.updateCacheForDay(day)
-            .then(scheduleDay => {
-                this.display(scheduleDay);
-            })
-            .catch(err => {
-                alert("error updating cache:" + err);
-            })
+            this.setLoading(false);            
         }else{
-            this.updateCacheForDay(day)
-            .then(scheduleDay => {
-                this.display(scheduleDay);
-            })
-            .catch(err => {
-                alert("error updating cache:" + err);
-            })
+            this.setLoading(true);
         }
+        this.updateCacheForDay(day)
+        .then(scheduleDay => {
+            this.status = "";
+            this.display(scheduleDay);
+            this.setLoading(false);
+        }) 
+        .catch(err => { 
+            this.setLoading(false);
+            if(!cached)
+                this.status = "Connecte toi à internet et réessaie"
+            else
+                this.status = err;
+        }) 
     }
 
     updateCacheForDay(day: moment.Moment): Promise<any>{
-        return new Promise((resolve, reject) => {
+        this.status = "Mise a jour du cache...";
+        return new Promise((resolve, reject) => { 
             if(!this.userService.hasConnectivity())
                 return reject("Pas de connection internet");
 
             this.userService.isConnected()
             .then(connected => {
-                if(connected){
+                if(connected){ 
                     this.updateCacheForDayUnsafe(day)
                         .then((scheduleDay) => {
                             resolve(scheduleDay);
@@ -113,7 +131,6 @@ export class DayComponent implements OnInit{
                         .then(() => this.userService.isConnected())
                         .then(connected => {
                             if(!connected){
-                                alert("Impossible de se connecter");
                                 reject("Impossible de se connecter");
                             }else{
                                 this.updateCacheForDayUnsafe(day)
@@ -126,7 +143,7 @@ export class DayComponent implements OnInit{
                             }
                         })
                     }else{
-                        reject();
+                        reject("Redirection to login page");
                         this.routerExtensions.navigate(["/login"], { clearHistory: true })
                     }
                 }
@@ -158,9 +175,10 @@ export class DayComponent implements OnInit{
     }
 
     onNavigatedTo(event){
-        if(event.isBackNavigation){
-            //let navData = this.page.navigationContext;
-            //this.displayCurrentDay();
+        if(event.isBackNavigation && this.dataPasser.day != -1){            
+            let mom = moment(this.dataPasser.year +"-" + this.dataPasser.month + "-" + this.dataPasser.day);
+            this.displayDay(mom);
+            this.dataPasser.day = -1;
         }
     }
 

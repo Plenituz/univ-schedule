@@ -5,6 +5,7 @@ import { UserService } from "../../shared/user/user.service";
 import { Page } from "ui/page";
 import { View } from "ui/core/view";
 import { DatePicker } from "ui/date-picker";
+import { DataPasser } from "../../shared/dataPasser";
 
 @Component({
     selector: "calendar",
@@ -16,20 +17,19 @@ export class CalendarComponent implements OnInit{
     @ViewChild("picker") picker: ElementRef;
 
     constructor(private userService: UserService,
-         private router: Router, private page: Page, private routerExtensions: RouterExtensions){
+         private router: Router, private page: Page, 
+         private routerExtensions: RouterExtensions, private dataPasser: DataPasser){
 
     }
 
     submit(){
         let picker = <DatePicker>this.picker.nativeElement
 
-        this.userService.goToDayNum(picker.day, picker.month, picker.year)
-        .then(response => {
-            this.routerExtensions.backToPreviousPage();
-        })
-        .catch(err => {
-            alert("error changing day:" + err);
-        })
+        this.dataPasser.day = picker.day;
+        this.dataPasser.month = picker.month;
+        this.dataPasser.year = picker.year;
+
+        this.routerExtensions.backToPreviousPage();
     }
  
     ngOnInit(): void {  

@@ -1,30 +1,37 @@
-<GridLayout rows="auto, *, auto"> 
-    <Label [text]="status"></Label>
-    <Label row="0" [text]="day.date ? day.date : 'Loading...'" class="header bold"></Label>
-
-    <ScrollView row="1" orientation="vertical" >
-        <ListView [items]="day.classes">
-            <ng-template let-class="item" let-i="index"> 
-                <StackLayout (tap)="clickItem(i)"> 
-                    <DockLayout class="tiny-header">
-                        <Label [text]="class.type" style="min-width: 30" dock="left" class="bold"></Label>
-                        <Label text=" " dock="left"></Label>
-                        <Label [text]="class.name" dock="left" class="bold name"></Label>
-                    </DockLayout> 
-                    <DockLayout stretchLastChild="true">
-                        <Label [text]="class.timeStart + '-' + class.timeEnd" dock="right" style="min-width: 100" class="semi-bold room"></Label>
-                        <Label [text]="class.room" dock="left" class="semi-bold room" [visibility]="class.room ? 'visible' : 'collapsed'"></Label>
-                    </DockLayout>
-                    <Label [text]="class.speaker" class="semi-bold room speaker" [visibility]="class.speaker ? 'visible' : 'collapsed'"></Label>
-                    <Label [text]="class.extraInfo" class="room speaker name" [visibility]="class.extraInfo ? 'visible' : 'collapsed'"></Label>
-                </StackLayout>
-            </ng-template>
-        </ListView>
-    </ScrollView>   
-    
-    <GridLayout row="2" columns="auto, *, auto" class="footer">
-        <Image src="~/images/arrow.png" style="transform: rotate(180deg)" (tap)="clickPrev()" class="arrow"></Image>
-        <Image src="~/images/calendar.png" col="1" (tap)="clickCalendar()"></Image>
-        <Image src="~/images/arrow.png" col="2" (tap)="clickNext()" class="arrow"></Image>
+<GridLayout rows="*, auto">
+    <GridLayout rows="auto, *, auto"> 
+        <Label row="0" [text]="loading ? 'Loading...' : day.date" class="header bold"></Label>
+        <ScrollView row="1" orientation="vertical" >
+            <ListView [items]="day.classes">
+                <ng-template let-class="item" let-i="index"> 
+                    <StackLayout (tap)="clickItem(i)"> 
+                        <DockLayout class="tiny-header">
+                            <Label [text]="class.type" style="min-width: 30" dock="left" class="bold"></Label>
+                            <Label text=" " dock="left"></Label>
+                            <Label [text]="class.name" dock="left" class="bold name"></Label>
+                        </DockLayout> 
+                        <DockLayout stretchLastChild="true">
+                            <Label [text]="class.timeStart + '-' + class.timeEnd" dock="right" style="min-width: 100" class="semi-bold room"></Label>
+                            <Label [text]="class.room" dock="left" class="semi-bold room" [visibility]="class.room ? 'visible' : 'collapsed'"></Label>
+                        </DockLayout>
+                        <Label [text]="class.speaker" class="semi-bold room speaker" [visibility]="class.speaker ? 'visible' : 'collapsed'"></Label>
+                        <Label [text]="class.extraInfo" class="room speaker name" [visibility]="class.extraInfo ? 'visible' : 'collapsed'"></Label>
+                    </StackLayout>
+                </ng-template>
+            </ListView>
+        </ScrollView>   
+        
+        <GridLayout row="2" columns="*, *, *, *" class="footer">
+            <Image src="~/images/arrow.png" style="transform: rotate(180deg)" (tap)="clickPrev()"></Image>
+            <Image src="~/images/cog.png" col="1" (tap)="clickOptions()"></Image>
+            <Image src="~/images/calendar.png" col="2" (tap)="clickCalendar()"></Image>
+            <Image src="~/images/arrow.png" col="3" (tap)="clickNext()"></Image>
+        </GridLayout>
     </GridLayout>
+
+    <AbsoluteLayout row="0">
+        <Label [text]="status" [visibility]="status ? 'visible' : 'hidden'" class="bold statusText"></Label>        
+        <Label [text]="'mis a jour le ' + day.cacheDate" [visibility]="loading ? 'hidden' : 'visible'" class="cacheDate" top="39"></Label>
+    </AbsoluteLayout>
 </GridLayout>
+

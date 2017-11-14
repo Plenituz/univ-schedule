@@ -1,5 +1,6 @@
 import { ScheduleClass } from "./scheduleClass";
 import * as moment from 'moment';
+import { Config } from "../config";
 const parseHTML = require('nativescript-xml2js').parseString;
 const extractScheduleRegex = new RegExp('<ul data-role="listview" data-theme="d" data-divider-theme="b">[^]*</ul>');
 const extractDateRegex = new RegExp('<h1>([^]* \\d{1,2} [^]*)</h1>');
@@ -16,6 +17,10 @@ export class ScheduleDay{
         return new Promise((resolve, reject) => {
 
             let cleanHTML = extractScheduleRegex.exec(html);
+            if(!cleanHTML){
+                Config.jsessionid = "";
+                return reject("J'ai tout cassé! Rafraichit la page stp");
+            }
             parseHTML(cleanHTML.toString(), (err, result) => {
                 if(err)
                     return reject(err);
@@ -61,11 +66,15 @@ export class ScheduleDay{
     }
 
     updateCacheDate(){
-        this.cacheDate = moment().format();
+        this.cacheDate = moment().format("DD/MM/YYYY");
     }
 
     id(): string{
         return ScheduleDay.formatDate(this.date);
+    }
+
+    dateMoment(): moment.Moment{
+        return moment(this.date, "DD MMM", 'fr');
     }
 
     static formatDate(date: string): string{
