@@ -8,7 +8,7 @@
 android {  
   defaultConfig {  
     generatedDensities = []
-    applicationId = "org.nativescript.UnivSchedule" 
+    applicationId = "com.plenituz.UnivSchedule" 
     
     //override supported platforms
     // ndk {
