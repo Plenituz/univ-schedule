@@ -10,8 +10,8 @@ import { DataPasser } from "../../shared/dataPasser.service";
 @Component({
     selector: "calendar",
     providers: [UserService],
-    templateUrl: "calendar.html",
-    styleUrls: ["calendar-common.css", "calendar.css"]
+    templateUrl: /*"./pages/calendar/" +*/ "calendar.html",
+    styleUrls: [/*"./pages/calendar/" +*/ "calendar-common.css", /*"./pages/calendar/" +*/ "calendar.css"]
 })
 export class CalendarComponent implements OnInit{
     @ViewChild("picker") picker: ElementRef;

@@ -4,14 +4,14 @@ import { RouterExtensions } from "nativescript-angular/router";
 import { Page } from "ui/page";
 import { ConfigService } from "../../shared/config.service";
 import { ScheduleCache } from "../../shared/scheduleCache";
-import { DataPasser } from "../../shared/dataPasser.service";
+import { DataPasser } from "../../shared/dataPasser.service"; 
 import * as moment from 'moment';
 
 @Component({
     selector: "settings",
     providers: [],
-    templateUrl: "settings.html",
-    styleUrls: ["settings-common.css", "settings.css"]
+    templateUrl: /*"./pages/settings/" +*/ "settings.html",
+    styleUrls: [/*"./pages/settings/" +*/ "settings-common.css", /*"./pages/settings/" +*/ "settings.css"]
 })
 export class SettingsComponent implements OnInit{
 

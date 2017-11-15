@@ -7,8 +7,8 @@ import { Router } from "@angular/router";
 @Component({
     selector: "login",
     providers: [UserService],
-    templateUrl: "login.html",
-    styleUrls: ["login-common.css", "login.css"]
+    templateUrl: /*"./pages/login/" +*/ "login.html",
+    styleUrls: [/*"./pages/login/" +*/ "login-common.css", /*"./pages/login/" +*/ "login.css"]
 })
 export class LoginComponent{
     user: User;

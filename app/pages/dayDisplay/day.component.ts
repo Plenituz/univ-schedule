@@ -8,14 +8,14 @@ import { ScheduleClass } from "../../shared/schedule/scheduleClass";
 import { ScheduleCache } from "../../shared/scheduleCache";
 import { Router } from "@angular/router";
 import * as moment from 'moment';
-import { looseIdentical } from "@angular/core/src/util";
-import { DataPasser } from "../../shared/dataPasser.service"; 
+//import { looseIdentical } from "@angular/core/src/util";
+import { DataPasser } from "../../shared/dataPasser.service";
 
 @Component({
-    selector: "day",
+    selector: "day", 
     providers: [UserService],
-    templateUrl: "day.html",
-    styleUrls: ["day-common.css", "day.css"]
+    templateUrl: /*"./pages/dayDisplay/" +*/ "day.html",
+    styleUrls: [/*"./pages/dayDisplay/" +*/ "day-common.css", /*"./pages/dayDisplay/" +*/ "day.css"]
 })
 export class DayComponent implements OnInit{
     day: ScheduleDay = new ScheduleDay(this.config);
@@ -101,7 +101,7 @@ export class DayComponent implements OnInit{
             if((cached && this.day.date == scheduleDay.date) || !cached)
                 this.display(scheduleDay);
             this.setLoading(false);
-        }) 
+        })  
         .catch(err => { 
             this.setLoading(false);
             if(!cached)
@@ -109,6 +109,10 @@ export class DayComponent implements OnInit{
             else
                 this.status = err;
         }) 
+    }
+
+    creatingView(){
+        console.log("creating view");
     }
 
     updateCacheForDay(day: moment.Moment): Promise<any>{

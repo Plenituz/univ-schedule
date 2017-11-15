@@ -237,7 +237,6 @@ export class UserService {
      * @param url url containing the ticket to get the cookie on vtmob
      */
     private loginOnVtmob(url: string): Promise<any>{
-        console.log(url)
         let options = {
             url: url,
             method: "GET",
