@@ -9,11 +9,15 @@ export class ScheduleClass{
     extraInfo: string;//"+ ...."
 
     public toString(): string{
-        let str = this.type + " " + this.name + "\n"
-                + "en " + this.room + "\n" 
-                + "a " + this.timeStart + "\n"
-                + "jusqu'a " + this.timeEnd
-                + (this.extraInfo ? "\n" + this.extraInfo : "");
+        return ScheduleClass.toString(this);
+    }
+
+    static toString(scheduleClass: ScheduleClass): string{
+        let str = scheduleClass.type + " " + scheduleClass.name + "\n"
+            + "en " + scheduleClass.room + "\n" 
+            + "a " + scheduleClass.timeStart + "\n"
+            + "jusqu'a " + scheduleClass.timeEnd
+            + (scheduleClass.extraInfo ? "\n" + scheduleClass.extraInfo : "");
         return str;
     }
 }

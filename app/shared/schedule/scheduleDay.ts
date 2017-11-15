@@ -1,24 +1,28 @@
 import { ScheduleClass } from "./scheduleClass";
+import { Injectable } from "@angular/core";
 import * as moment from 'moment';
-import { Config } from "../config";
+import { ConfigService } from "../config.service";
 const parseHTML = require('nativescript-xml2js').parseString;
 const extractScheduleRegex = new RegExp('<ul data-role="listview" data-theme="d" data-divider-theme="b">[^]*</ul>');
 const extractDateRegex = new RegExp('<h1>([^]* \\d{1,2} [^]*)</h1>');
 const Entities = require('html-entities').AllHtmlEntities;
 const entities = new Entities();
 
+@Injectable()
 export class ScheduleDay{
     date: string;
     //date this object was created/updated from the website
     cacheDate: string;
     classes: Array<ScheduleClass> = [];
 
+    constructor(private config: ConfigService){}
+
     buildFromHTML(html: string): Promise<any>{
         return new Promise((resolve, reject) => {
 
             let cleanHTML = extractScheduleRegex.exec(html);
             if(!cleanHTML){
-                Config.jsessionid = "";
+                this.config.jsessionid = "";
                 return reject("J'ai tout cassé! Rafraichit la page stp");
             }
             parseHTML(cleanHTML.toString(), (err, result) => {

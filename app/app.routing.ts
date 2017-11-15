@@ -1,11 +1,11 @@
 import { LoginComponent } from "./pages/login/login.component";
 import { DayComponent } from "./pages/dayDisplay/day.component";
 import { CalendarComponent } from "./pages/calendar/calendar.component";
-import { Config } from "./shared/config";
 import { SettingsComponent } from "./pages/settings/settings.component";
+var applicationSettings = require("application-settings");
 
 export const routes = [
-  { path: "", component: Config.loginIsValid ? DayComponent : LoginComponent },
+  { path: "", component: applicationSettings.getBoolean("loginIsValid", false) ? DayComponent : LoginComponent },
   { path: "login", component: LoginComponent },
   { path: "day", component: DayComponent },
   { path: "datePicker", component: CalendarComponent },

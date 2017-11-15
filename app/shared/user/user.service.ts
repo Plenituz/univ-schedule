@@ -9,7 +9,7 @@ import * as connectivity from "tns-core-modules/connectivity";
 import * as moment from 'moment';
 
 import { User } from "./user";
-import { Config } from "../config";
+import { ConfigService } from "../config.service";
 import { LoginInfo } from "./loginInfo";
 import { ScheduleDay } from "../schedule/scheduleDay";
 
@@ -20,12 +20,12 @@ export class UserService {
     private static incompleteUrlSchedule = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml;jsessionid=";
     private static urlCalendar = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/calendar.xhtml";
     private static urlScheduleNoJsessionid = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml"
-    constructor() {}
+    constructor(private config: ConfigService) {}
 
     getDaySchedule(): Promise<any>{
         return this.getScheduleHTML()
         .then(response => {
-            let day = new ScheduleDay();
+            let day = new ScheduleDay(this.config);
             let cleaned = this.cleanHTML(response.content.toString());
 
             return day.buildFromHTML(cleaned);
@@ -46,8 +46,8 @@ export class UserService {
         return this.getLoginPage()
         .then(response => {
             // console.log(response.content);
-            let jsessionid = Config.jsessionid; //= this.extractCookieValue([response.headers["Set-Cookie"]], "JSESSIONID");
-            let loginInfo = new LoginInfo(Config.user, response.content);
+            let jsessionid = this.config.jsessionid; //= this.extractCookieValue([response.headers["Set-Cookie"]], "JSESSIONID");
+            let loginInfo = new LoginInfo(this.config.user, response.content);
             //  console.log("got cookie", jsessionid, " and built info from page:");
             //  console.dir(loginInfo);
             return this.loginOnCas(jsessionid, loginInfo);
@@ -59,7 +59,7 @@ export class UserService {
         .then(response => {
             let vtmobJsessionid = this.extractCookieValue([response.headers["Set-Cookie"]], "JSESSIONID");
             //  console.log("cookie should be here:", vtmobJsessionid);
-            Config.jsessionid = vtmobJsessionid;
+            this.config.jsessionid = vtmobJsessionid;
         });
     }
 
@@ -74,7 +74,7 @@ export class UserService {
     private prepareGoToDay(){
         return this.getScheduleHTML()
         .then(response => {
-            let cookie = "JSESSIONID=" + Config.jsessionid;
+            let cookie = "JSESSIONID=" + this.config.jsessionid;
             let viewState = LoginInfo.extractInputValue("javax.faces.ViewState", response.content);
             viewState = viewState.substring(0, 2);
     
@@ -100,7 +100,7 @@ export class UserService {
     }
 
     getCalendar(): Promise<any>{
-        let cookie = "JSESSIONID=" + Config.jsessionid;
+        let cookie = "JSESSIONID=" + this.config.jsessionid;
         let options = {
             url: UserService.urlCalendar,
             method: "GET",
@@ -141,7 +141,7 @@ export class UserService {
                 'source': 'formCal:hiddenLink'
             }
             data = querystring.stringify(data);
-            let cookie = "JSESSIONID=" + Config.jsessionid;
+            let cookie = "JSESSIONID=" + this.config.jsessionid;
             
             let options = {
                 url: UserService.urlCalendar,
@@ -165,7 +165,7 @@ export class UserService {
             'source': 'redirectForm:semSuiv'
         }
         data = querystring.stringify(data);
-        let cookie = "JSESSIONID=" + Config.jsessionid;
+        let cookie = "JSESSIONID=" + this.config.jsessionid;
         let options = {
             url: UserService.urlScheduleNoJsessionid,
             method: "POST",
@@ -187,7 +187,7 @@ export class UserService {
             'source': 'redirectForm:semPrec'
         }
         data = querystring.stringify(data);
-        let cookie = "JSESSIONID=" + Config.jsessionid;
+        let cookie = "JSESSIONID=" + this.config.jsessionid;
         let options = { 
             url: UserService.urlScheduleNoJsessionid,
             method: "POST",
@@ -237,6 +237,7 @@ export class UserService {
      * @param url url containing the ticket to get the cookie on vtmob
      */
     private loginOnVtmob(url: string): Promise<any>{
+        console.log(url)
         let options = {
             url: url,
             method: "GET",
@@ -246,9 +247,9 @@ export class UserService {
     }
 
     private getScheduleHTML(){
-        let cookie = "JSESSIONID=" + Config.jsessionid;
+        let cookie = "JSESSIONID=" + this.config.jsessionid;
         let options = {
-            url: UserService.incompleteUrlSchedule + Config.jsessionid,
+            url: UserService.incompleteUrlSchedule + this.config.jsessionid,
             method: "GET",
             headers:{
                 'Cookie': cookie              

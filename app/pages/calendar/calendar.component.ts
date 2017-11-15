@@ -5,13 +5,13 @@ import { UserService } from "../../shared/user/user.service";
 import { Page } from "ui/page";
 import { View } from "ui/core/view";
 import { DatePicker } from "ui/date-picker";
-import { DataPasser } from "../../shared/dataPasser";
+import { DataPasser } from "../../shared/dataPasser.service";
 
 @Component({
     selector: "calendar",
     providers: [UserService],
-    templateUrl: "./pages/calendar/calendar.html",
-    styleUrls: ["pages/calendar/calendar-common.css", "pages/calendar/calendar.css"]
+    templateUrl: "calendar.html",
+    styleUrls: ["calendar-common.css", "calendar.css"]
 })
 export class CalendarComponent implements OnInit{
     @ViewChild("picker") picker: ElementRef;

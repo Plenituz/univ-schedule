@@ -2,31 +2,33 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { RouterExtensions } from "nativescript-angular/router";
 import { Page } from "ui/page";
-import { Config } from "../../shared/config";
+import { ConfigService } from "../../shared/config.service";
 import { ScheduleCache } from "../../shared/scheduleCache";
-import { DataPasser } from "../../shared/dataPasser";
+import { DataPasser } from "../../shared/dataPasser.service";
 import * as moment from 'moment';
 
 @Component({
     selector: "settings",
     providers: [],
-    templateUrl: "./pages/settings/settings.html",
-    styleUrls: ["pages/settings/settings-common.css", "pages/settings/settings.css"]
+    templateUrl: "settings.html",
+    styleUrls: ["settings-common.css", "settings.css"]
 })
 export class SettingsComponent implements OnInit{
 
     constructor(private router: Router, private page: Page, 
-         private routerExtensions: RouterExtensions, private dataPasser: DataPasser){
+         private routerExtensions: RouterExtensions, 
+         private dataPasser: DataPasser, 
+         private config: ConfigService){
 
     }
 
     disconnect(){
-        let user = Config.user;
+        let user = this.config.user;
         user.login = "";
         user.password = "";
-        Config.user = user;
-        Config.jsessionid = "";
-        Config.loginIsValid = false;
+        this.config.user = user;
+        this.config.jsessionid = "";
+        this.config.loginIsValid = false;
         this.routerExtensions.navigate(["/login"], { clearHistory: true });
     }
 

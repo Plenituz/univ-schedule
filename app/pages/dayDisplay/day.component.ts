@@ -1,30 +1,31 @@
 import { Component, OnInit, NgZone } from "@angular/core";
-import { Config } from "../../shared/config";
+import { ConfigService } from "../../shared/config.service";
 import { UserService } from "../../shared/user/user.service";
 import { Page } from "ui/page";
 import { RouterExtensions } from "nativescript-angular/router";
 import { ScheduleDay } from "../../shared/schedule/scheduleDay";
+import { ScheduleClass } from "../../shared/schedule/scheduleClass";
 import { ScheduleCache } from "../../shared/scheduleCache";
 import { Router } from "@angular/router";
 import * as moment from 'moment';
 import { looseIdentical } from "@angular/core/src/util";
-import { DataPasser } from "../../shared/dataPasser"; 
+import { DataPasser } from "../../shared/dataPasser.service"; 
 
 @Component({
     selector: "day",
     providers: [UserService],
-    templateUrl: "./pages/dayDisplay/day.html",
-    styleUrls: ["pages/dayDisplay/day-common.css", "pages/dayDisplay/day.css"]
+    templateUrl: "day.html",
+    styleUrls: ["day-common.css", "day.css"]
 })
 export class DayComponent implements OnInit{
-    day: ScheduleDay = new ScheduleDay();
+    day: ScheduleDay = new ScheduleDay(this.config);
     loading: boolean = false;
     status: string = ""; 
 
     constructor(private userService: UserService, private page: Page, 
         private router: Router, private ngZone: NgZone, 
         private routerExtensions: RouterExtensions,
-        private dataPasser: DataPasser)
+        private dataPasser: DataPasser, private config: ConfigService)
     {
         ScheduleCache.init();
         this.displayCurrentDay();
@@ -68,7 +69,7 @@ export class DayComponent implements OnInit{
         let clicked = this.day.classes[index];
         alert({
             title: "Détails",
-            message: clicked.toString(),
+            message: ScheduleClass.toString(clicked),
             okButtonText: "OK"
         });
     }
@@ -127,7 +128,7 @@ export class DayComponent implements OnInit{
                             reject(err);
                         })
                 }else{
-                    if(Config.loginIsValid){
+                    if(this.config.loginIsValid){
                         this.userService.connect()
                         .then(() => this.userService.isConnected())
                         .then(connected => {
