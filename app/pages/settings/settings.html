@@ -1,4 +1,7 @@
 <GridLayout rows="*, *">
     <Button text="Déconnexion" class="element" row="0" style="vertical-align:bottom" (tap)="disconnect()"></Button>
     <Button text="Vider le cache" class="element" row="1" style="vertical-align:top" (tap)="emptyCache()"></Button>
+    <AbsoluteLayout row="0">
+        <ActivityIndicator [busy]="loading" class="loading"></ActivityIndicator>        
+    </AbsoluteLayout>
 </GridLayout>

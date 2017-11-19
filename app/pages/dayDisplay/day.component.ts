@@ -11,15 +11,21 @@ import * as moment from 'moment';
 //import { looseIdentical } from "@angular/core/src/util";
 import { DataPasser } from "../../shared/dataPasser.service";
 
+/**
+ * main view, the schedule displaying component
+ */
 @Component({
     selector: "day", 
     providers: [UserService],
-    templateUrl: /*"./pages/dayDisplay/" +*/ "day.html",
-    styleUrls: [/*"./pages/dayDisplay/" +*/ "day-common.css", /*"./pages/dayDisplay/" +*/ "day.css"]
+    templateUrl:/* "./pages/dayDisplay/" +*/ "day.html",
+    styleUrls: [/*"./pages/dayDisplay/" + */"day-common.css", /*"/pages/dayDisplay/" +*/ "day.css"]
 })
 export class DayComponent implements OnInit{
+    /** the currently displayed day */
     day: ScheduleDay = new ScheduleDay(this.config);
+    /** indicates weither or not the page is currently loading */
     loading: boolean = false;
+    /** status text displayed at the top of the screen */
     status: string = ""; 
 
     constructor(private userService: UserService, private page: Page, 
@@ -29,18 +35,6 @@ export class DayComponent implements OnInit{
     {
         ScheduleCache.init();
         this.displayCurrentDay();
-    }
-
-    private updateSchedule(){  
-        
-        this.userService.getDaySchedule()
-        .then(d => {
-            //force the ui to refresh
-            this.ngZone.run(() => {
-                this.day = d;
-                ScheduleCache.store(this.day);
-            })
-        })
     }
 
     clickOptions(){
@@ -74,18 +68,34 @@ export class DayComponent implements OnInit{
         });
     }
 
+    /**
+     * display the given day
+     * This just makes sure the assignement to day is done inside
+     * a ngZone.run.
+     * This shouldn't be necessary but on some events it is (onNavigatedFrom for example)
+     * @param scheduleDay 
+     */
     display(scheduleDay: ScheduleDay){
         this.ngZone.run(() => {
             this.day = scheduleDay;
         })
     }
 
+    /**
+     * work arround for the zone not working on some events
+     * @param val 
+     */
     setLoading(val: boolean){
         this.ngZone.run(() => {
             this.loading = val;
         })
     }
 
+    /**
+     * takes care of everything that goes into displaying the given day:
+     * reading cache, setting loading status, updating status text, and updating the cache
+     * @param day 
+     */
     displayDay(day: moment.Moment){
         //check if the wanted day is the next/previous day for shortcuts
         let cached = ScheduleCache.getForDay(day);
@@ -95,11 +105,19 @@ export class DayComponent implements OnInit{
         }else{
             this.setLoading(true);
         }
+
         this.updateCacheForDay(day)
         .then(scheduleDay => {
             this.status = "";
+            //make sure we are on the same day that we just loaded,
+            //because if you spam the next/prev button the loading might be slower
+            //than the click 
             if((cached && this.day.date == scheduleDay.date) || !cached)
                 this.display(scheduleDay);
+            //note: this is not perfect, if 2 days are loading with a slight delay one from another
+            //once the first one finishes the Loading status is set to false even though the 
+            //app is technically still loading stuff
+            //that being said, it doesn't seem to be a huge problem for now
             this.setLoading(false);
         })  
         .catch(err => { 
@@ -111,11 +129,12 @@ export class DayComponent implements OnInit{
         }) 
     }
 
-    creatingView(){
-        console.log("creating view");
-    }
-
-    updateCacheForDay(day: moment.Moment): Promise<any>{
+    /**
+     * update the cached value for the given day
+     * and take care fo all the login stuff
+     * @param day 
+     */
+    updateCacheForDay(day: moment.Moment): Promise<ScheduleDay>{
         this.status = "Mise a jour du cache...";
         return new Promise((resolve, reject) => { 
             if(!this.userService.hasConnectivity())
@@ -125,12 +144,12 @@ export class DayComponent implements OnInit{
             .then(connected => {
                 if(connected){ 
                     this.updateCacheForDayUnsafe(day)
-                        .then((scheduleDay) => {
-                            resolve(scheduleDay);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        })
+                    .then((scheduleDay) => {
+                        resolve(scheduleDay);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
                 }else{
                     if(this.config.loginIsValid){
                         this.userService.connect()
@@ -140,12 +159,12 @@ export class DayComponent implements OnInit{
                                 reject("Impossible de se connecter");
                             }else{
                                 this.updateCacheForDayUnsafe(day)
-                                    .then((scheduleDay) => {
-                                        resolve(scheduleDay);
-                                    })
-                                    .catch(err => {
-                                        reject(err);
-                                    })
+                                .then((scheduleDay) => {
+                                    resolve(scheduleDay);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
                             }
                         })
                     }else{
@@ -157,6 +176,10 @@ export class DayComponent implements OnInit{
         });
     }
 
+    /**
+     * update cache for the given day without taking care of the login stuff
+     * @param day 
+     */
     private updateCacheForDayUnsafe(day: moment.Moment): Promise<any>{
         //this assumes your are connected 
         return new Promise((resolve, reject) => {
@@ -164,7 +187,7 @@ export class DayComponent implements OnInit{
             this.userService.goToDayMom(day)
             .then(() => {
                 return this.userService.getDaySchedule();
-            })
+            }) 
             .then(scheduleDay => {
                 ScheduleCache.store(scheduleDay);
                 resolve(scheduleDay);
@@ -180,9 +203,13 @@ export class DayComponent implements OnInit{
         this.displayDay(mom);
     }
 
+    /**
+     * update the date when you come back from the datePicker view
+     * @param event 
+     */
     onNavigatedTo(event){
         if(event.isBackNavigation && this.dataPasser.day != -1){            
-            let mom = moment(this.dataPasser.year +"-" + this.dataPasser.month + "-" + this.dataPasser.day);
+            let mom = moment(this.dataPasser.year + "-" + this.dataPasser.month + "-" + this.dataPasser.day);
             this.displayDay(mom);
             this.dataPasser.day = -1;
         }

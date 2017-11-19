@@ -29,6 +29,7 @@
         </GridLayout>
     </GridLayout>
 
+    <!-- trick to display stuff above every thing: use an AbsoluteLayout in a GridLayout and explicitaly say row=0 -->
     <AbsoluteLayout row="0">
         <Label [text]="status" [visibility]="status ? 'visible' : 'hidden'" class="bold statusText"></Label>        
         <Label [text]="'mis a jour le ' + day.cacheDate" [visibility]="loading ? 'hidden' : 'visible'" class="cacheDate" top="39"></Label>

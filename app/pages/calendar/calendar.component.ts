@@ -7,11 +7,14 @@ import { View } from "ui/core/view";
 import { DatePicker } from "ui/date-picker";
 import { DataPasser } from "../../shared/dataPasser.service";
 
+/**
+ * date picker 
+ */
 @Component({
     selector: "calendar",
     providers: [UserService],
     templateUrl: /*"./pages/calendar/" +*/ "calendar.html",
-    styleUrls: [/*"./pages/calendar/" +*/ "calendar-common.css", /*"./pages/calendar/" +*/ "calendar.css"]
+    styleUrls: [/*"./pages/calendar/" +*/ "calendar-common.css", /*"/pages/calendar/" +*/ "calendar.css"]
 })
 export class CalendarComponent implements OnInit{
     @ViewChild("picker") picker: ElementRef;
@@ -25,6 +28,7 @@ export class CalendarComponent implements OnInit{
     submit(){
         let picker = <DatePicker>this.picker.nativeElement
 
+        //pass data back to the day page
         this.dataPasser.day = picker.day;
         this.dataPasser.month = picker.month;
         this.dataPasser.year = picker.year;

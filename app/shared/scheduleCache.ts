@@ -2,9 +2,18 @@ import { Couchbase } from "nativescript-couchbase";
 import * as moment from 'moment';
 import { ScheduleDay } from "./schedule/scheduleDay";
 
+/**
+ * this class is in charge of interfacing with the database
+ * I use Couchbase as a database and the use is primary but 
+ * for what is needed it's good enough. Although it might cause problems if the DB 
+ * gets too big
+ */
 export class ScheduleCache{
     private static database: Couchbase;
 
+    /**
+     * this has to be called before using any other function of this class
+     */
     static init(){
         ScheduleCache.database = new Couchbase("schedule.db");
         this.database.createView("all", "1", function(document, emitter) {
@@ -12,14 +21,20 @@ export class ScheduleCache{
         });
     }
 
+    /**
+     * clear the DB of all it's content
+     */
     static clear(){
         let rows = ScheduleCache.database.executeQuery("all");
         for(let i = 0; i < rows.length; i++){
             ScheduleCache.database.deleteDocument(rows[i]._id);
         }
-        console.dir(ScheduleCache.database.executeQuery("all"));
     }
 
+    /**
+     * get the cached day for the given Moment
+     * @param date 
+     */
     static getForDay(date: moment.Moment): ScheduleDay{
         let id = ScheduleDay.formatMoment(date);
         let rows = ScheduleCache.database.executeQuery("all")
@@ -29,6 +44,14 @@ export class ScheduleCache{
         return rows[0];
     }
 
+    /**
+     * store or update the day in the DB
+     * this function makes sure the days you store always have an
+     * _id equal to the day formatted as DD/MM, so no duplicate day in the DB
+     * 
+     * That's also why you shouldn't put day manually in the DB
+     * @param day 
+     */
     static store(day: ScheduleDay){
         day.updateCacheDate();        
         let id = day.id();

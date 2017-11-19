@@ -4,11 +4,14 @@ import { UserService } from "../../shared/user/user.service";
 import { ConfigService } from "../../shared/config.service";
 import { Router } from "@angular/router";
 
+/**
+ * login page
+ */
 @Component({
     selector: "login",
     providers: [UserService],
     templateUrl: /*"./pages/login/" +*/ "login.html",
-    styleUrls: [/*"./pages/login/" +*/ "login-common.css", /*"./pages/login/" +*/ "login.css"]
+    styleUrls: [/*"./pages/login/" +*/ "login-common.css", /*"/pages/login/" +*/ "login.css"]
 })
 export class LoginComponent{
     user: User;

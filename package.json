@@ -23,6 +23,7 @@
     "nativescript-angular": "~4.4.1",
     "nativescript-couchbase": "^1.0.18",
     "nativescript-theme-core": "^1.0.4",
+    "nativescript-toast": "^1.4.6",
     "nativescript-xml2js": "^0.5.2",
     "querystring": "^0.2.0",
     "reflect-metadata": "~0.1.8",

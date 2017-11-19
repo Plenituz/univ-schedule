@@ -3,3 +3,9 @@
     padding: 15 0;
     text-align: center;
 }
+
+.loading{
+    width: 100%;
+    margin-top: 50;
+    text-align: center;
+}
