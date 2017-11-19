@@ -137,7 +137,7 @@ export class DayComponent implements OnInit{
         this.status = "Mise a jour du cache...";
         return new Promise((resolve, reject) => { 
             if(!this.userService.hasConnectivity())
-                return reject("Pas de connection internet");
+                return reject("Pas de connexion internet");
 
             this.userService.isConnected()
             .then(connected => {
