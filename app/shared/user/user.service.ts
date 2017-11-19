@@ -1,11 +1,7 @@
 import { Injectable } from "@angular/core";
-//import { Http, Headers, Response } from "@angular/http";
 const http = require("http");
 import { HttpResponse } from "http";
 const querystring = require('querystring');
-//import { Observable } from "rxjs/Rx";
-//import "rxjs/add/operator/do";
-//import "rxjs/add/operator/map";
 import * as connectivity from "tns-core-modules/connectivity";
 import * as moment from 'moment';
 

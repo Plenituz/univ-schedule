@@ -8,7 +8,6 @@ import { ScheduleClass } from "../../shared/schedule/scheduleClass";
 import { ScheduleCache } from "../../shared/scheduleCache";
 import { Router } from "@angular/router";
 import * as moment from 'moment';
-//import { looseIdentical } from "@angular/core/src/util";
 import { DataPasser } from "../../shared/dataPasser.service";
 
 /**
