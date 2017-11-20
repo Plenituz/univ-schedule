@@ -42,7 +42,7 @@ Don't forget to re-add the comments before submitting a pull request.
 # The login process
 This app is only possible because I figured out how the login protocol works on the university's website. In this section I will explain what I found. Note that some pieces of the puzzle are still missing, see the "Known bugs" section.
 
-![login process](https://octodex.github.com/images/yaktocat.png)
+![login process](https://raw.githubusercontent.com/Plenituz/univ-schedule/master/other/schema_login.png)
 
 Our goal here is to obtain a JSESSIONID cookie for the domain vtmob.univ-valenciennes.fr. It is important to note that the cookie you get from login into cas.univ-valenciennes.fr won't work on vtmob. Cas stands for "centralized authentication service", as the name implies it's this domains that distribute all the cookies, therefore the first step is to log into cas. 
 
