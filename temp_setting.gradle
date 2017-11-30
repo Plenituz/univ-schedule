@@ -1,0 +1,13 @@
+android {
+            defaultConfig {
+                applicationId = "com.plenituz.UnivSchedule"
+
+                if (false) {
+                    minSdkVersion = false
+                }
+
+                if (false) {
+                    targetSdkVersion = false
+                }
+            }
+        }
