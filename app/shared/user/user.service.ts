@@ -4,6 +4,7 @@ import { HttpResponse } from "http";
 const querystring = require('querystring');
 import * as connectivity from "tns-core-modules/connectivity";
 import * as moment from 'moment';
+import * as app from "tns-core-modules/application";
 
 import { User } from "./user";
 import { ConfigService } from "../config.service";
@@ -21,19 +22,23 @@ import { ScheduleDay } from "../schedule/scheduleDay";
  */
 @Injectable()
 export class UserService {
-    private static urlLoginPage = "https://cas.univ-valenciennes.fr/cas/login?service=https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml";
+    private static urlLoginPage = encodeURI("https://cas.univ-valenciennes.fr/cas/login?service=https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml");
     /** 
      * the url to get the schedule but without the value of jsessionid at the end 
      * Note: this is not strictly necessary (adding ;jsessionid=... at the end that is)
      * but to be sure the server is happy we still use it
      * 
      * It's not necessary because we also send a cookie with the same value
+     * 
+     * we don't encoreURI this because we still need to add the JSSESSIONID so we will encode in the actual function sending the request
      */
     private static incompleteUrlSchedule = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml;jsessionid=";
     /** url to get the calendat view */
-    private static urlCalendar = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/calendar.xhtml";
+    private static urlCalendar = encodeURI("https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/calendar.xhtml");
     /** same as incompleteUrlSchedule but you don't need to add the jsessionid at the end */
-    private static urlScheduleNoJsessionid = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml"
+    private static urlScheduleNoJsessionid = encodeURI("https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml");
+    private static urlLogout = encodeURI("https://cas.univ-valenciennes.fr/cas/logout?url=https://portail.univ-valenciennes.fr/Login");
+
 
     constructor(private config: ConfigService) {}
 
@@ -68,15 +73,15 @@ export class UserService {
      * the vtmob jsessionid
      */
     connect(): Promise<void>{
-        return this.getLoginPage()
-        .then(response => {               
+        return this.getLoginPage() 
+        .then(response => {  
             let jsessionid = this.config.jsessionid; 
             let loginInfo = new LoginInfo(this.config.user, response.content.toString());
             return this.loginOnCas(jsessionid, loginInfo);
         })
-        .then(response => { 
+        .then(response => {
             return this.loginOnVtmob(response.headers.Location.toString());
-        }) 
+        })
         .then(response => { 
             let vtmobJsessionid = this.extractCookieValue([response.headers["Set-Cookie"]], "JSESSIONID");
             this.config.jsessionid = vtmobJsessionid;
@@ -86,7 +91,7 @@ export class UserService {
     disconnect(): Promise<HttpResponse>{
         let cookie = "JSESSIONID=" + this.config.jsessionid;
         let options = {
-            url: "https://cas.univ-valenciennes.fr/cas/logout?url=https://portail.univ-valenciennes.fr/Login",
+            url: UserService.urlLogout,
             method: "GET",
             dontFollowRedirects: true,
             headers: {
@@ -308,6 +313,7 @@ export class UserService {
     private loginOnCas(jsessionid: string, loginInfo: LoginInfo): Promise<HttpResponse>{
         let data = querystring.stringify(loginInfo);
         let cookie = "JSESSIONID=" + jsessionid;
+
         let options = {
             url: UserService.urlLoginPage,
             method: "POST",
@@ -331,6 +337,7 @@ export class UserService {
      * @param url url containing the ticket to get the cookie on vtmob
      */
     private loginOnVtmob(url: string): Promise<HttpResponse>{
+        url = encodeURI(url);
         let options = {
             url: url,
             method: "GET",
@@ -345,7 +352,7 @@ export class UserService {
     private getScheduleHTML(): Promise<HttpResponse>{
         let cookie = "JSESSIONID=" + this.config.jsessionid;
         let options = {
-            url: UserService.incompleteUrlSchedule + this.config.jsessionid,
+            url: encodeURI(UserService.incompleteUrlSchedule + this.config.jsessionid),
             method: "GET",
             headers:{
                 'Cookie': cookie              
@@ -362,6 +369,8 @@ export class UserService {
      */
     private extractCookie(cookies, name): string{
         for(let i = 0; i < cookies.length; i++){
+            if(!cookies[i])
+                continue;
             if(cookies[i].includes(name)){
                 let split = cookies[i].split(";");
                 for(let k = 0; k < split.length; k++){
@@ -381,7 +390,9 @@ export class UserService {
      */
     public extractCookieValue(cookies, name): string{
         let c = this.extractCookie(cookies, name);
-        return c.split('=')[1];
+        if(c)
+            return c.split('=')[1];
+        return "";
     }
 
     /**

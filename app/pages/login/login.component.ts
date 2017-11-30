@@ -29,7 +29,7 @@ export class LoginComponent{
         .then(() => {
             this.loading = false;
             this.config.loginIsValid = true;
-            this.router.navigate(["/day"]);
+            this.router.navigate(["/day"]); 
         })
         .catch(err => {
             this.loading = false; 

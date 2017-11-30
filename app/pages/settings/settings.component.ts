@@ -8,7 +8,6 @@ import { DataPasser } from "../../shared/dataPasser.service";
 import * as moment from 'moment';
 import * as Toast from 'nativescript-toast';
 import { UserService } from "../../shared/user/user.service";
-import { loadAppCss } from "tns-core-modules/application/application";
 
 /**
  * settings page 
@@ -40,6 +39,8 @@ export class SettingsComponent implements OnInit{
             this.config.user = user;
             this.config.jsessionid = "";
             this.config.loginIsValid = false;
+            ScheduleCache.clear();
+
             this.routerExtensions.navigate(["/login"], { clearHistory: true });
         })
         .catch(err => {

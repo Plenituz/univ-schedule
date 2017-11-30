@@ -2,7 +2,7 @@
 .header{
     height: 60;
     font-size: 20;
-    background-color: #1CBCFF;
+    background-color: rgb(96, 208, 252);
     text-align: center;
     width: 100%;
     padding: 18 0;
@@ -18,14 +18,14 @@
 
 .tiny-header{
     font-size: 17;
-    background-color: rgb(122, 219, 255);
+    background-color: #c2d076;
     height: 30;
     padding-top: 3;
     padding-left: 10
 }
 
 .statusText{
-    background-color: #1CBCFF;
+    background-color: rgb(96, 208, 252);
     color: rgba(48, 48, 48, 0.452);
     width: 100%;
     padding-left: 5;
