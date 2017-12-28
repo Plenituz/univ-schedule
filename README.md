@@ -4,7 +4,9 @@ This is a Nativescript app that allow students of the University of Valenciennes
 This app is written in TypeScript with Angular and uses Couchbase for storing data. 
 You can find the app on the Play Store here: https://play.google.com/store/apps/details?id=com.plenituz.UnivSchedule
 
-For the iPhone version you will have to build it yourself, instruction will come soon
+You can also find the apk in the root of this repo.
+
+For the iPhone version there is some problems with the login procedure and I can't debug it without a mac. Feel free to help if you do.
 
 # How to build on Android
 
@@ -40,7 +42,7 @@ This is more of a workaround, if you find some kind of precompiler instruction d
 Don't forget to re-add the comments before submitting a pull request.
 
 # The login process
-This app is only possible because I figured out how the login protocol works on the university's website. In this section I will explain what I found. Note that some pieces of the puzzle are still missing, see the "Known bugs" section.
+This app is only possible because I figured out how the login protocol works on the university's website. In this section I will explain what I found.
 
 ![login process](https://raw.githubusercontent.com/Plenituz/univ-schedule/master/other/schema_login.png)
 
@@ -96,13 +98,13 @@ Once you're properly logged in you still need to know some details before you ca
 
 The main thing you need to know is that the state of the schedule is kept by the server, not the client. This means you don't send "give me x day" to the server but "give me the current day". You can then send some request to ask the server to go to the next/previous day. 
 
-You can however still ask the server to go to a specific date by using the calendar. To do so you first need to ask the server to "open" the calendar view and then to go to the wanted date. If you directly ask the server to go to the date it will answer with a javafx exception saying that the calendar view has not been initialized. To get more details on that see the method `goToDay()` app/shared/user/user.service.ts.
+You can however still ask the server to go to a specific date by using the calendar. To do so you first need to ask the server to "open" the calendar view and then to go to the wanted date. If you directly ask the server to go to the date it will answer with a javafx exception saying that the calendar view has not been initialized. To get more details on that see the method `goToDay()` in app/shared/user/user.service.ts.
 
 # Known bugs
 
- - After disconnecting you have to restart the app or your login is always invalid. For some reason the server doesn't send the real login page with the full form after disconnecting. 
- - If you enter a wrong login/password, the next time you tap connect an error will pop up, even if the login/password is good.
-
+ - The login procedure doesn't work on the IOS version and I don't have a mac to debug it
+ 
+ 
  # Contributions
 
 Contributions are of course welcome, each class should be documented but if you have questions shoot me an email.
