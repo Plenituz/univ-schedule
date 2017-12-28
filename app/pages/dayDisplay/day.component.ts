@@ -16,12 +16,13 @@ import { DataPasser } from "../../shared/dataPasser.service";
 @Component({
     selector: "day", 
     providers: [UserService],
-    templateUrl:/* "./pages/dayDisplay/" +*/ "day.html",
-    styleUrls: [/*"./pages/dayDisplay/" + */"day-common.css", /*"/pages/dayDisplay/" +*/ "day.css"]
+    templateUrl: /*"./pages/dayDisplay/" +*/ "day.html",
+    styleUrls: [/*"./pages/dayDisplay/" +*/ "day-common.css", /*"/pages/dayDisplay/" +*/ "day.css"]
 })
 export class DayComponent implements OnInit{
     /** the currently displayed day */
     day: ScheduleDay = new ScheduleDay(this.config);
+    displayedMoment: moment.Moment;
     /** indicates weither or not the page is currently loading */
     loading: boolean = false;
     /** status text displayed at the top of the screen */
@@ -43,7 +44,14 @@ export class DayComponent implements OnInit{
     clickNext(){
         if(!this.day.date)
             return;
-        let nextDay = moment(this.day.date, "DD MMM", 'fr').add(1, 'days');        
+        let nextDay;
+        if(this.displayedMoment){
+            let date = this.day.date + " " + this.displayedMoment.format("YYYY");
+            nextDay = moment(date, "DD MMM YYYY", 'fr').add(1, 'days');
+        }else{
+            nextDay = moment(this.day.date, "DD MMM", 'fr').add(1, 'days');
+        }
+        
         this.displayDay(nextDay); 
     }
 
@@ -96,6 +104,7 @@ export class DayComponent implements OnInit{
      * @param day 
      */
     displayDay(day: moment.Moment){
+        this.displayedMoment = day;
         //check if the wanted day is the next/previous day for shortcuts
         let cached = ScheduleCache.getForDay(day);
         if(cached != null){
