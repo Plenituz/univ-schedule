@@ -6,8 +6,8 @@ android {
                     minSdkVersion = false
                 }
 
-                if (false) {
-                    targetSdkVersion = false
+                if (26) {
+                    targetSdkVersion = 26
                 }
             }
         }
