@@ -22,7 +22,7 @@ import { ScheduleDay } from "../schedule/scheduleDay";
  */
 @Injectable()
 export class UserService {
-    private static urlLoginPage = encodeURI("https://cas.univ-valenciennes.fr/cas/login?service=https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml");
+    private static urlLoginPage = encodeURI("https://cas.uphf.fr/cas/login?service=https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml");
     /** 
      * the url to get the schedule but without the value of jsessionid at the end 
      * Note: this is not strictly necessary (adding ;jsessionid=... at the end that is)
@@ -32,12 +32,12 @@ export class UserService {
      * 
      * we don't encoreURI this because we still need to add the JSSESSIONID so we will encode in the actual function sending the request
      */
-    private static incompleteUrlSchedule = "https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml;jsessionid=";
+    private static incompleteUrlSchedule = "https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml;jsessionid=";
     /** url to get the calendat view */
-    private static urlCalendar = encodeURI("https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/calendar.xhtml");
+    private static urlCalendar = encodeURI("https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/mobile/calendar.xhtml");
     /** same as incompleteUrlSchedule but you don't need to add the jsessionid at the end */
-    private static urlScheduleNoJsessionid = encodeURI("https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml");
-    private static urlLogout = encodeURI("https://cas.univ-valenciennes.fr/cas/logout?url=https://portail.univ-valenciennes.fr/Login");
+    private static urlScheduleNoJsessionid = encodeURI("https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml");
+    private static urlLogout = encodeURI("https://cas.uphf.fr/cas/logout?url=https://portail.uphf.fr/Login");
 
 
     constructor(private config: ConfigService) {}
@@ -319,9 +319,9 @@ export class UserService {
             method: "POST",
             dontFollowRedirects: true,
             headers: {
-                'Origin': "https://cas.univ-valenciennes.fr",
+                'Origin': "https://cas.uphf.fr",
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Referer': "https://cas.univ-valenciennes.fr/cas/login;jsessionid=" + jsessionid + "?service=https://vtmob.univ-valenciennes.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml",
+                'Referer': "https://cas.uphf.fr/cas/login;jsessionid=" + jsessionid + "?service=https://vtmob.uphf.fr/esup-vtclient-up4/stylesheets/mobile/welcome.xhtml",
                 'Cookie': cookie,
                 'Connection': 'keep-alive',
                 'Upgrade-Insecure-Requests': 1
